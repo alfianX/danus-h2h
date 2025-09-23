@@ -1,0 +1,322 @@
+{"level":"error","msg":"client handler -  client prepare -\u003e generate key hsm: dial tcp 146.196.106.202:3421: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-09-16 09:27:34"}
+{"level":"error","msg":"client handler -  client prepare -\u003e generate key hsm: dial tcp 146.196.106.202:3421: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-09-16 09:27:59"}
+{"level":"error","msg":"client handler -  client prepare -\u003e generate key hsm: dial tcp 146.196.106.202:3421: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-09-16 11:20:16"}
+{"level":"error","msg":"client handler -  client prepare -\u003e generate key hsm: dial tcp 146.196.106.202:3421: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.","time":"2025-09-16 11:29:25"}
+{"level":"error","msg":"client handler -  client prepare -\u003e ISO convert to ASCII -\u003e ISO pack fail, err: failed to pack field 44 (Additional Data): failed to encode content: failed to perform ASCII encoding","time":"2025-09-16 13:35:53"}
+{"level":"error","msg":"client handler -  client prepare -\u003e ISO convert to ASCII -\u003e ISO pack fail, err: failed to pack field 44 (Additional Data): failed to encode content: failed to perform ASCII encoding","time":"2025-09-16 13:37:49"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59302-\u003e127.0.0.1:9824: wsarecv: An existing connection was forcibly closed by the remote host.","time":"2025-09-16 14:07:41"}
+{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 1s...","time":"2025-09-16 14:07:46"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59829-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:54:42"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59829-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:54:42"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59847-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:55:12"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59847-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:55:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59857-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:55:27"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59857-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:55:27"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59860-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:56:09"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59860-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:56:09"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59860-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:56:15"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59860-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:56:15"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59860-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:56:15"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59875-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:56:42"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59875-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:56:42"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59875-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:56:42"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59885-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:57:00"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59885-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:57:00"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59897-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:58:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59897-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 14:58:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59906-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:58:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59906-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:58:38"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:59910-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:58:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:59910-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 14:58:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60275-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:29:41"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60275-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:29:42"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60279-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:33:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60279-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:33:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60279-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:33:40"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60279-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:33:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60333-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:34:01"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60333-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:34:01"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60345-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:36:47"}
+{"level":"error","msg":"Error writing health check message: write tcp 127.0.0.1:60345-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:36:47"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60345-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:36:47"}
+{"level":"error","msg":"Error writing health check message: write tcp 127.0.0.1:60345-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:36:47"}
+{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 1s...","time":"2025-09-16 15:37:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60408-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:37:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60408-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:37:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60408-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:37:49"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60418-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:38:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60418-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:38:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60418-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:38:19"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60423-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:38:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60423-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:38:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60423-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:38:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60423-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:38:49"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60425-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:39:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60425-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:39:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60425-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60425-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60425-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:19"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60436-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:39:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60436-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:39:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60436-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60436-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60436-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60436-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:39:49"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: wsarecv: An existing connection was forcibly closed by the remote host.","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60442-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:40:12"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60458-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:41:04"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60458-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:41:04"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60467-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:41:34"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60467-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:41:34"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60468-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:41:49"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60468-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:41:49"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60470-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:42:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60470-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:42:19"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60470-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:42:19"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60495-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:44:43"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60495-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:44:43"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60508-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:45:14"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60508-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:45:14"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60521-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:46:18"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60521-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:46:18"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60521-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:46:18"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60521-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:46:18"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60521-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:46:18"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60550-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 15:46:43"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60550-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 15:46:43"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60856-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:01:55"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60856-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:01:55"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60864-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:02:25"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60864-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:02:25"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60874-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:02:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60874-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:02:40"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60880-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:03:10"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60880-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:03:10"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60880-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:03:10"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60904-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:03:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60904-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:03:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60904-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:03:40"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60925-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:03:55"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60925-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:03:55"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60925-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:03:55"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60937-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:04:25"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60937-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:25"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60937-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:25"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60937-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:25"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60937-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:25"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60962-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:04:55"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60962-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:55"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60962-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:55"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60962-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:55"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60962-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:04:55"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60987-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:05:10"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60987-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:05:10"}
+{"level":"error","msg":"Health check failed: no response from host within timeout. Error: read tcp 127.0.0.1:60987-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:05:10"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:06:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:60999-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:06:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61015-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:06:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:06:38"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61029-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:06:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:06:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:07:23"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61033-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:07:23"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:07:23"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:07:38"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61045-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:07:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:08:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61055-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:08:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:08:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:08:08"}
+{"level":"error","msg":"host handler -\u003e Error reading message body from host: read tcp 127.0.0.1:61065-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:08:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:08:38"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61075-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:09:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61090-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:09:23"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61090-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:09:23"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61090-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:09:23"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61090-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:09:23"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61095-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:09:53"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61108-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:10:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:10:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61112-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:10:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:10:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:10:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:10:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:10:38"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:10:38"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61121-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:11:08"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:11:08"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61121-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:11:08"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61121-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:11:08"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61121-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:11:08"}
+{"level":"error","msg":"Health check failed with error: read tcp 127.0.0.1:61121-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:11:08"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61132-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:11:23"}
+{"level":"error","msg":"Health check failed: no response from host within timeout.","time":"2025-09-16 16:11:23"}
+{"level":"error","msg":"host handler -\u003e Error reading message body from host: read tcp 127.0.0.1:61135-\u003e127.0.0.1:9824: i/o timeout","time":"2025-09-16 16:11:53"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:00"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61540-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:37:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:11"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61570-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:37:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:21"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61572-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:37:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:31"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61575-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:37:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:41"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61576-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:37:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61577-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:37:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61579-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61585-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61588-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:38:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61592-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61595-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:41"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61604-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:38:51"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61606-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:01"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61610-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:11"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61615-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:21"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61618-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:39:31"}
+{"level":"error","msg":"Connection status check failed: Host is not responding.","time":"2025-09-16 16:42:50"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:61695-\u003e127.0.0.1:9824: use of closed network connection","time":"2025-09-16 16:42:50"}
