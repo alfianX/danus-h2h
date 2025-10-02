@@ -338,11 +338,51 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 			}),
 		}),
 		23: field.NewString(&field.Spec{
-			Length:      4,
+			Length:      3,
 			Description: "Card Sequence Number (CSN)",
 			Enc:         encoding.ASCII,
 			Pref:        prefix.ASCII.Fixed,
 			Pad:         padding.Left('0'),
+			Packer: field.PackerFunc(func(value []byte, spec *field.Spec) ([]byte, error) {
+				if spec.Pad != nil {
+					value = spec.Pad.Pad(value, spec.Length+1)
+				}
+
+				encodedValue, err := spec.Enc.Encode(value)
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode content: %w", err)
+				}
+
+				// Encode the length of the packed data, not the length of the value
+				maxLength := spec.Length + 1
+
+				// Encode the length of the encoded value
+				lengthPrefix, err := spec.Pref.EncodeLength(maxLength, len(encodedValue))
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode length: %w", err)
+				}
+
+				return append(lengthPrefix, encodedValue...), nil
+			}),
+			Unpacker: field.UnpackerFunc(func(packedFieldValue []byte, spec *field.Spec) ([]byte, int, error) {
+				maxEncodedValueLength := spec.Length
+
+				encodedValueLength, prefBytes, err := spec.Pref.DecodeLength(maxEncodedValueLength, packedFieldValue)
+				if err != nil {
+					return nil, 0, fmt.Errorf("failed to decode length: %w", err)
+				}
+
+				// for BCD encoding, the length of the packed data is twice the length of the encoded value
+				valueLength := encodedValueLength
+
+				// Decode the packed data length
+				value, read, err := spec.Enc.Decode(packedFieldValue[prefBytes+1:], valueLength)
+				if err != nil {
+					return nil, 0, fmt.Errorf("failed to decode content: %w", err)
+				}
+
+				return value, read + prefBytes + 1, nil
+			}),
 		}),
 		24: field.NewString(&field.Spec{
 			Length:      3,

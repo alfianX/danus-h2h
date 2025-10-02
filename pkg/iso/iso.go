@@ -331,6 +331,35 @@ func CreateIsoResLogon(msg []byte, bit48 string) ([]byte, error) {
 	return msgSend, nil
 }
 
+func CreateIsoResReversal(msg []byte) ([]byte, error) {
+	isoStr := hex.EncodeToString(msg)
+	isomessage := iso8583.NewMessage(Spec87Hex)
+	err := isomessage.Unpack([]byte(isoStr))
+	if err != nil {
+		return nil, err
+	}
+
+	err = isomessage.Field(39, "00")
+	if err != nil {
+		return nil, err
+	}
+
+	isomessage.MTI("0410")
+
+	rawMessage, err := isomessage.Pack()
+	if err != nil {
+		return nil, err
+	}
+
+	iso8583.Describe(isomessage, os.Stdout)
+
+	msgSend, err := hex.DecodeString(string(rawMessage))
+	if err != nil {
+		return nil, err
+	}
+	return msgSend, nil
+}
+
 // buildErrorResponse adalah fungsi helper untuk membuat respons error ISO 8583
 func BuildErrorResponse(msg, responseCode string, isoType int) ([]byte, error) {
 	var specIso *iso8583.MessageSpec

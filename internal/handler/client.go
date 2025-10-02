@@ -223,7 +223,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 
 			newPinBlock, err := f.HSMTranslatePin(h.Config.HsmAddress, tpk, zpk, pinBlock, panParsed)
 			if err != nil {
-				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> hsm translate pin: %s", err), RC: RCErrGeneral}
+				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> hsm translate pin: %s", err), RC: "55"}
 			}
 
 			err = isomessage.Field(11, stanHost)
@@ -277,6 +277,14 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 		})
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> get stan host from db: %s", err), RC: RCErrGeneral}
+		}
+
+		if stanHost == "" {
+			isoSend, err := iso.CreateIsoResReversal(msg)
+			if err != nil {
+				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
+			}
+			return isoSend, 0, 1, errorMessage{}
 		}
 
 		stanManage := StanManage{StanClient: stan, Duration: time.Now()}

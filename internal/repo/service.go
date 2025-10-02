@@ -71,7 +71,14 @@ func TransactionGetStanHost(ctx context.Context, db *gorm.DB, data *TransactionH
 			data.Mti, data.Procode, data.Amount, data.Stan, data.Tid, data.Mid).
 		First(&trxHistory)
 
-	return trxHistory.StanHost, result.Error
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return "", nil
+		}
+		return "", result.Error
+	}
+
+	return trxHistory.StanHost, nil
 }
 
 func KeyGetZMK(ctx context.Context, db *gorm.DB) (string, error) {

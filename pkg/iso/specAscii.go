@@ -348,7 +348,7 @@ var Spec87 *iso8583.MessageSpec = &iso8583.MessageSpec{
 		55: field.NewString(&field.Spec{
 			Length:      999,
 			Description: "ICC Data – EMV Having Multiple Tags",
-			Enc:         encoding.Binary,
+			Enc:         encoding.ASCII,
 			Pref:        prefix.ASCII.LLL,
 		}),
 		56: field.NewString(&field.Spec{

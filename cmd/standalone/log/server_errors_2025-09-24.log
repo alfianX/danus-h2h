@@ -1,0 +1,3 @@
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:62728-\u003e127.0.0.1:9824: wsarecv: An existing connection was forcibly closed by the remote host.","time":"2025-09-24 11:21:52"}
+{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 1s...","time":"2025-09-24 11:21:57"}
+{"level":"error","msg":"host handler -\u003e Error reading from host: read tcp 127.0.0.1:63182-\u003e127.0.0.1:9824: wsarecv: An existing connection was forcibly closed by the remote host.","time":"2025-09-24 14:42:04"}
