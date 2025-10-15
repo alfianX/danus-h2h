@@ -1,4 +1,0 @@
-{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 1s...","time":"2025-09-19 14:02:45"}
-{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 2s...","time":"2025-09-19 14:02:46"}
-{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 4s...","time":"2025-09-19 14:02:48"}
-{"level":"error","msg":"Failed to connect to host 127.0.0.1:9824: dial tcp 127.0.0.1:9824: connectex: No connection could be made because the target machine actively refused it.. Retrying in 8s...","time":"2025-09-19 14:02:52"}
