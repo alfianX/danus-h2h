@@ -1,2 +1,9 @@
 /.vscode
 /bin
+.env
+
+/cmd/service/log
+/cmd/standalone/log
+
+/cmd/service/.env
+/cmd/standalone/.env

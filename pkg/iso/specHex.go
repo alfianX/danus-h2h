@@ -539,8 +539,11 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 					return nil, fmt.Errorf("failed to encode length: %w", err)
 				}
 
-				if len(encodedValue) == maxLength {
-					encodedValue = spec.Pad.Pad(encodedValue, maxLength+1)
+				// if len(encodedValue) == maxLength {
+				// 	encodedValue = spec.Pad.Pad(encodedValue, maxLength+1)
+				// }
+				if len(encodedValue)%2 != 0 {
+					encodedValue = spec.Pad.Pad(encodedValue, len(encodedValue)+1)
 				}
 
 				return append(lengthPrefix, encodedValue...), nil
@@ -562,7 +565,7 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 					return nil, 0, fmt.Errorf("failed to decode content: %w", err)
 				}
 
-				if valueLength == maxEncodedValueLength {
+				if valueLength%2 != 0 {
 					prefBytes = prefBytes + 1
 				}
 
@@ -1688,8 +1691,8 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 					return nil, fmt.Errorf("failed to encode length: %w", err)
 				}
 
-				if len(encodedValue) == maxLength {
-					encodedValue = spec.Pad.Pad(encodedValue, maxLength+1)
+				if len(encodedValue)%2 != 0 {
+					encodedValue = spec.Pad.Pad(encodedValue, len(encodedValue)+1)
 				}
 
 				return append(lengthPrefix, encodedValue...), nil
@@ -1711,7 +1714,7 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 					return nil, 0, fmt.Errorf("failed to decode content: %w", err)
 				}
 
-				if valueLength == maxEncodedValueLength {
+				if valueLength%2 != 0 {
 					prefBytes = prefBytes + 1
 				}
 

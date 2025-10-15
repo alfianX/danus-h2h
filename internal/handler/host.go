@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/alfianX/danus-h2h/internal/repo"
@@ -33,6 +35,7 @@ func (h *Handler) ConnectToHost() {
 			h.hostConnLock.Unlock()
 			// go h.hostHealthCheck()
 			go h.hostHandler()
+			go h.sendNmm()
 			return
 		}
 
@@ -90,7 +93,9 @@ func (h *Handler) hostHandler() {
 		}
 
 		fullMessage := append(header, messageBytes...)
-		isoStr := string(fullMessage[2:])
+		isoStr := strings.ToUpper(string(fullMessage[2:]))
+
+		h.Log.Printf("from host : %s", isoStr)
 
 		isomessage := iso8583.NewMessage(iso.Spec87)
 		err = isomessage.Unpack([]byte(isoStr))
@@ -145,6 +150,160 @@ func (h *Handler) hostHandler() {
 	}
 }
 
+func (h *Handler) sendNmm() {
+	serverAddress := fmt.Sprintf("127.0.0.1:%d", h.Config.ListenPort)
+	conn, err := net.Dial("tcp", serverAddress)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed to connect to host %s: %v", serverAddress, err)
+		return
+	}
+
+	isoSignOn := "002860001900000800822000010000000004000000000000001008081740000002111234567890100001"
+	msgSignOn, err := hex.DecodeString(isoSignOn)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed to decode msg sign on: %v", err)
+		return
+	}
+
+	_, err = conn.Write(msgSignOn)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed to write sign on: %v", err)
+		return
+	}
+
+	header := make([]byte, HeaderLen)
+	_, err = io.ReadFull(conn, header)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed read header response sign on: %v", err)
+		return
+	}
+
+	headerStr := hex.EncodeToString(header)
+	msgLength, err := strconv.ParseInt(headerStr, HexBase, IntBitSize)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed to parse length sign on: %v", err)
+		return
+	}
+
+	messageBytes := make([]byte, msgLength)
+	_, err = io.ReadFull(conn, messageBytes)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed to read response sign on: %v", err)
+		return
+	}
+
+	conn.Close()
+
+	fullMessage := append(header, messageBytes...)
+	isoResString := strings.ToUpper(hex.EncodeToString(fullMessage))
+
+	isomessage := iso8583.NewMessage(iso.Spec87Hex)
+	if err := isomessage.Unpack([]byte(isoResString[14:])); err != nil {
+		h.Log.Errorf("send nmm -> failed to unpack response sign on: %v", err)
+		return
+	}
+
+	responseCode, err := isomessage.GetString(39)
+	if err != nil {
+		h.Log.Errorf("send nmm -> failed to unpack bit 39 response sign on: %v", err)
+		return
+	}
+
+	if responseCode == "00" {
+		conn, err := net.Dial("tcp", serverAddress)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed to connect to host %s: %v", serverAddress, err)
+			return
+		}
+
+		isoNewKey := "002860001900000800822000010000000004000000000000001008081740000002111234567890100102"
+		msgIsoNewKey, err := hex.DecodeString(isoNewKey)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed to decode msg new key: %v", err)
+			return
+		}
+
+		_, err = conn.Write(msgIsoNewKey)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed to write new key: %v", err)
+			return
+		}
+
+		header := make([]byte, HeaderLen)
+		_, err = io.ReadFull(conn, header)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed read header response new key: %v", err)
+			return
+		}
+
+		headerStr := hex.EncodeToString(header)
+		msgLength, err := strconv.ParseInt(headerStr, HexBase, IntBitSize)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed to parse length new key: %v", err)
+			return
+		}
+
+		messageBytes := make([]byte, msgLength)
+		_, err = io.ReadFull(conn, messageBytes)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed to read response new key: %v", err)
+			return
+		}
+
+		conn.Close()
+
+		fullMessage := append(header, messageBytes...)
+		isoResString := strings.ToUpper(hex.EncodeToString(fullMessage))
+
+		isomessage := iso8583.NewMessage(iso.Spec87Hex)
+		if err := isomessage.Unpack([]byte(isoResString[14:])); err != nil {
+			h.Log.Errorf("send nmm -> failed to unpack response new key: %v", err)
+			return
+		}
+
+		responseCode, err := isomessage.GetString(39)
+		if err != nil {
+			h.Log.Errorf("send nmm -> failed to unpack bit 39 response sign on: %v", err)
+			return
+		}
+
+		if responseCode == "00" {
+			de48, err := isomessage.GetString(48)
+			if err != nil {
+				h.Log.Errorf("send nmm -> unpack bist 48: %v", err)
+				return
+			}
+			zpk := de48[:32]
+
+			zmk, err := repo.KeyGetZMK(context.Background(), h.db)
+			if err != nil {
+				h.Log.Errorf("send nmm -> get zmk: %v", err)
+				return
+			}
+
+			zpkEnc, err := f.HSMSaveZPK(h.Config.HsmAddress, zmk, zpk)
+			if err != nil {
+				h.Log.Errorf("send nmm -> save zpk to hsm: %v", err)
+				return
+			}
+
+			err = repo.KeyUpdateZPK(context.Background(), h.db, zpkEnc)
+			if err != nil {
+				h.Log.Errorf("send nmm -> update zpk to db: %v", err)
+				return
+			}
+
+			return
+		} else {
+			h.Log.Errorf("send nmm -> response new key: %s", responseCode)
+			return
+		}
+	} else {
+		h.Log.Errorf("send nmm -> response sign on: %s", responseCode)
+		return
+	}
+}
+
 func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) {
 	h.hostConnLock.Lock()
 	hostConn := h.hostConn
@@ -160,6 +319,9 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack iso:", err)
 		return
 	}
+
+	iso8583.Describe(isomessage, os.Stdout)
+
 	mti, err := isomessage.GetMTI()
 	if err != nil {
 		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack mti:", err)
@@ -179,8 +341,8 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 	h.responseMap.Store(stan, responseChan)
 	defer h.responseMap.Delete(stan) // Penting: Pastikan channel dihapus dari map
 
-	isoString := string(msg)
-	hostMsg := hex.EncodeToString(msg)
+	isoString := strings.ToUpper(string(msg))
+	hostMsg := hex.EncodeToString([]byte(isoString))
 	i := len(msg)
 	msgWlen := fmt.Sprintf("%04X%s", i, hostMsg)
 	msgSend, err := hex.DecodeString(msgWlen)
@@ -204,7 +366,7 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 			return
 		} else {
 			isoResponse := response.Data
-			isoResponseString := string(isoResponse)
+			isoResponseString := strings.ToUpper(string(isoResponse))
 
 			h.Log.WithField("debug_tag", "ul_in").Debugf("message from host : %s", isoResponseString)
 
@@ -404,13 +566,15 @@ func (h *Handler) networkManagementHandler(msg []byte) {
 	}
 
 	hostResMsg := hex.EncodeToString(isoResponse)
-	i := len(msg)
+	i := len(isoResponse)
 	msgWlen := fmt.Sprintf("%04X%s", i, hostResMsg)
 	msgSend, err := hex.DecodeString(msgWlen)
 	if err != nil {
 		h.Log.Errorf("network management handler -> decode msg: %v", err)
 		return
 	}
+
+	h.Log.Printf("send response to host: %s", string(isoResponse))
 
 	_, err = h.hostConn.Write(msgSend)
 	if err != nil {
@@ -419,51 +583,92 @@ func (h *Handler) networkManagementHandler(msg []byte) {
 	}
 }
 
-// func (h *Handler) hostHealthCheck() {
-// 	h.Log.Info("Starting host health check goroutine.")
-// 	ticker := time.NewTicker(30 * time.Second)
-// 	defer ticker.Stop()
+func (h *Handler) HostHealthCheck(ctx context.Context) {
+	h.Log.Info("Starting host health check goroutine.")
+	ticker := time.NewTicker(time.Duration(h.Config.EchoTestTime) * time.Second)
+	defer ticker.Stop()
 
-// 	for range ticker.C {
-// 		h.hostConnLock.Lock()
-// 		conn := h.hostConn
-// 		h.hostConnLock.Unlock()
+	for {
+		select {
+		case <-ticker.C:
+			serverAddress := fmt.Sprintf("127.0.0.1:%d", h.Config.ListenPort)
+			conn, err := net.Dial("tcp", serverAddress)
+			if err != nil {
+				h.Log.Errorf("cron echo test -> failed to connect to host %s: %v", serverAddress, err)
+				continue
+			}
 
-// 		// Jika koneksi sudah putus, tidak perlu melakukan health check
-// 		if conn == nil {
-// 			h.Log.Warn("Health check skipped: host connection is nil.")
-// 			continue
-// 		}
+			isoEchoTest := "002860001900000800822000010000000004000000000000001008081740000002111234567890100301"
+			msgEchoTest, err := hex.DecodeString(isoEchoTest)
+			if err != nil {
+				h.Log.Errorf("cron echo test -> failed to decode msg echo test: %v", err)
+				continue
+			}
 
-// 		// Kirim pesan Network Management Request (contoh 0800)
-// 		// Pesan ini tidak membutuhkan respons dari responseMap
-// 		isoString := "0800822000010000000004000000000000000729093815000041042000301"
-// 		hostMsg := hex.EncodeToString([]byte(isoString))
-// 		i := len(isoString)
-// 		msgWlen := fmt.Sprintf("%04X%s", i, hostMsg)
-// 		msgSend, err := hex.DecodeString(msgWlen)
-// 		if err != nil {
-// 			h.Log.Errorf("Failed to create 0800 message: %v", err)
-// 			continue
-// 		}
+			h.Log.Info("send echo test..")
+			_, err = conn.Write(msgEchoTest)
+			if err != nil {
+				h.Log.Errorf("cron echo test -> failed to write echo test: %v", err)
+				continue
+			}
 
-// 		// h.Log.Debug("Sending health check message to host.")
+			header := make([]byte, 2)
+			_, err = io.ReadFull(conn, header)
+			if err != nil {
+				if err == io.EOF {
+					h.Log.Warnf("cron echo test -> Host connection closed gracefully.")
+				} else {
+					h.Log.Errorf("cron echo test -> failed read header response echo test: %v", err)
+				}
+				continue
+			}
 
-// 		// Hanya kirim, jangan baca respons di sini.
-// 		conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-// 		_, err = conn.Write(msgSend)
-// 		conn.SetWriteDeadline(time.Time{})
+			headerStr := hex.EncodeToString(header)
+			msgLength, err := strconv.ParseInt(headerStr, 16, 64)
+			if err != nil {
+				h.Log.Errorf("cron echo test -> failed to parse length echo test: %v", err)
+				continue
+			}
 
-// 		if err != nil {
-// 			h.Log.Errorf("Error writing health check message: %v", err)
-// 			h.forceDisconnect()
-// 			continue
-// 		}
+			messageBytes := make([]byte, msgLength)
+			_, err = io.ReadFull(conn, messageBytes)
+			if err != nil {
+				if err == io.EOF {
+					h.Log.Warnf("cron echo test -> Host connection closed gracefully.")
+				} else {
+					h.Log.Errorf("cron echo test -> failed read body response echo test: %v", err)
+				}
+				continue
+			}
 
-// 		// Perbarui timestamp untuk melacak kapan ping terakhir dikirim
-// 		h.lastPingSent.Store(true, time.Now())
-// 	}
-// }
+			conn.Close()
+
+			fullMessage := append(header, messageBytes...)
+			isoResString := strings.ToUpper(hex.EncodeToString(fullMessage))
+
+			isomessage := iso8583.NewMessage(iso.Spec87Hex)
+			if err := isomessage.Unpack([]byte(isoResString[14:])); err != nil {
+				h.Log.Errorf("cron echo test -> failed to unpack response echo test: %v", err)
+				continue
+			}
+
+			responseCode, err := isomessage.GetString(39)
+			if err != nil {
+				h.Log.Errorf("cron echo test -> failed to unpack bit 39 response echo test: %v", err)
+				continue
+			}
+
+			if responseCode == "00" {
+				h.Log.Info("echo test ok")
+			} else {
+				h.Log.Infof("echo test not ok, rc %s", responseCode)
+			}
+		case <-ctx.Done(): // ✅ Deteksi sinyal pembatalan
+			h.Log.Info("Host health check goroutine received context done signal. Stopping.")
+			return
+		}
+	}
+}
 
 // // Fungsi helper untuk memutuskan koneksi secara paksa dan aman
 // func (h *Handler) forceDisconnect() {

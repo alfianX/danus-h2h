@@ -41,6 +41,10 @@ func NewTCP(appLogger *logrus.Logger, cnf config.Config, newHandlerFunc func(con
 func (s *TCP) Run(ctx context.Context) error {
 	go s.handler.ConnectToHost()
 
+	cronCtx, cancelCron := context.WithCancel(context.Background())
+	defer cancelCron()
+	go s.handler.HostHealthCheck(cronCtx)
+
 	s.log.Infof("Server listen on port: %d", s.config.ListenPort)
 	serverAddress := fmt.Sprintf("0.0.0.0:%d", s.config.ListenPort)
 	listener, err := net.Listen("tcp", serverAddress)
@@ -63,6 +67,7 @@ func (s *TCP) Run(ctx context.Context) error {
 			case <-ctx.Done():
 				fmt.Printf("Server shutting down, dropping queued client: %v\n", conn.RemoteAddr())
 				conn.Close()
+				cancelCron()
 				return
 			}
 		}
@@ -76,6 +81,7 @@ func (s *TCP) Run(ctx context.Context) error {
 			listener.Close()
 			close(waitingQueue)
 			wg.Wait()
+			cancelCron()
 			s.log.Infof("All client handlers finished. Server stopped.")
 			return ctx.Err()
 		default:
@@ -102,6 +108,7 @@ func (s *TCP) Run(ctx context.Context) error {
 			case <-ctx.Done():
 				s.log.Warnf("Server shutting down, dropping new connection: %v\n", conn.RemoteAddr())
 				conn.Close()
+				cancelCron()
 				return ctx.Err()
 			}
 		}

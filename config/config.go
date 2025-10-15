@@ -14,6 +14,7 @@ type Config struct {
 	TimeoutTrx        int    `envconfig:"TIMEOUT_TRX" default:"60"`
 	TimeoutInactivity string `envconfig:"TIMEOUT_INACTIVITY" default:"60"`
 	Debug             int    `envconfig:"DEBUG_LOG" default:"0"`
+	EchoTestTime      int    `envconfig:"ECHO_TEST_TIME" default:"30"`
 	LicenseKey        string `envconfig:"LICENSE_KEY"`
 }
 

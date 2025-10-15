@@ -100,7 +100,7 @@ func (h *Handler) ClientHandler(conn net.Conn, sem chan struct{}, wg *sync.WaitG
 		}
 
 		message = append(header, messageBytes...)
-		isoRequestString := hex.EncodeToString(message)
+		isoRequestString := strings.ToUpper(hex.EncodeToString(message))
 
 		conn.SetReadDeadline(time.Now().Add(time.Duration(timeoutTime) * time.Second))
 
@@ -143,7 +143,7 @@ func (h *Handler) ClientHandler(conn net.Conn, sem chan struct{}, wg *sync.WaitG
 
 // balikan dari fungsi ini 1. message iso, 2. type 0=diteruskan ke host, 1=dibalikan ke client, 3. error
 func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
-	isoReqString := hex.EncodeToString(msg)
+	isoReqString := strings.ToUpper(hex.EncodeToString(msg))
 	isomessage := iso8583.NewMessage(iso.Spec87Hex)
 
 	if err := isomessage.Unpack([]byte(isoReqString)); err != nil {
@@ -326,7 +326,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 func (h *Handler) sendBackHandler(msg []byte, conn net.Conn) {
 	if conn != nil {
 		TPDU := "6000000000"
-		clientMsg := hex.EncodeToString(msg)
+		clientMsg := strings.ToUpper(hex.EncodeToString(msg))
 		i := len(clientMsg)
 		value, ok := h.tpduConn.Load(conn)
 		if ok {
@@ -342,7 +342,7 @@ func (h *Handler) sendBackHandler(msg []byte, conn net.Conn) {
 			h.handleErrorAndRespond(conn, "", RCErrGeneral, "send back handler - decode iso:", err)
 			return
 		}
-		isoString := hex.EncodeToString(msgSend)
+		isoString := strings.ToUpper(hex.EncodeToString(msgSend))
 
 		_, err = conn.Write(msgSend)
 		if err != nil {

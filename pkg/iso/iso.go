@@ -22,8 +22,6 @@ func IsoConvertToAscii(msg []byte) ([]byte, error) {
 		return nil, fmt.Errorf("ISO convert to ASCII -> fail parsing MTI!, err: %v", err)
 	}
 
-	iso8583.Describe(isomessageHex, os.Stdout)
-
 	isomessage := iso8583.NewMessage(Spec87)
 	isomessage.MTI(mti)
 

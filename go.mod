@@ -41,6 +41,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kardianos/service v1.2.4
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/yerden/go-util v1.1.4 // indirect
 	golang.org/x/text v0.26.0 // indirect

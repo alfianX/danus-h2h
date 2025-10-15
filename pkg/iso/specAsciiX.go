@@ -8,7 +8,7 @@ import (
 	"github.com/moov-io/iso8583/prefix"
 )
 
-var Spec87 *iso8583.MessageSpec = &iso8583.MessageSpec{
+var Spec87X *iso8583.MessageSpec = &iso8583.MessageSpec{
 	Fields: map[int]field.Field{
 		0: field.NewString(&field.Spec{
 			Length:      4,
@@ -84,7 +84,7 @@ var Spec87 *iso8583.MessageSpec = &iso8583.MessageSpec{
 			Description: "Systems Trace Audit Number (STAN)",
 			Enc:         encoding.ASCII,
 			Pref:        prefix.ASCII.Fixed,
-			Pad:         padding.Left('0'),
+			Pad:         padding.Right(' '),
 		}),
 		12: field.NewString(&field.Spec{
 			Length:      6,
@@ -422,12 +422,6 @@ var Spec87 *iso8583.MessageSpec = &iso8583.MessageSpec{
 			Description: "Product Code",
 			Enc:         encoding.ASCII,
 			Pref:        prefix.ASCII.Fixed,
-		}),
-		100: field.NewString(&field.Spec{
-			Length:      11,
-			Description: "Receiving Institution Identification Code",
-			Enc:         encoding.ASCII,
-			Pref:        prefix.ASCII.LL,
 		}),
 		102: field.NewString(&field.Spec{
 			Length:      28,
