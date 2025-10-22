@@ -1785,5 +1785,57 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 				return value, read + prefBytes + 1, nil
 			}),
 		}),
+		127: field.NewString(&field.Spec{
+			Length:      999,
+			Description: "Destination Institution Identification Code",
+			Enc:         encoding.BytesToASCIIHex,
+			Pref:        prefix.ASCII.LLL,
+			Packer: field.PackerFunc(func(value []byte, spec *field.Spec) ([]byte, error) {
+				if spec.Pad != nil {
+					value = spec.Pad.Pad(value, spec.Length)
+				}
+
+				encodedValue, err := spec.Enc.Encode(value)
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode content: %w", err)
+				}
+
+				// Encode the length of the packed data, not the length of the value
+				maxLength := spec.Length
+
+				// Encode the length of the encoded value
+				lengthPrefix, err := spec.Pref.EncodeLength(maxLength, len(encodedValue)/2)
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode length: %w", err)
+				}
+
+				lengthPrefix = append([]byte("0"), lengthPrefix...)
+
+				return append(lengthPrefix, encodedValue...), nil
+			}),
+			Unpacker: field.UnpackerFunc(func(packedFieldValue []byte, spec *field.Spec) ([]byte, int, error) {
+				maxEncodedValueLength := spec.Length
+
+				encodedValueLength, prefBytes, err := spec.Pref.DecodeLength(maxEncodedValueLength, packedFieldValue[1:])
+				if err != nil {
+					return nil, 0, fmt.Errorf("failed to decode length: %w", err)
+				}
+
+				// for BCD encoding, the length of the packed data is twice the length of the encoded value
+				valueLength := encodedValueLength
+
+				// Decode the packed data length
+				value, read, err := spec.Enc.Decode(packedFieldValue[prefBytes+1:], valueLength)
+				if err != nil {
+					return nil, 0, fmt.Errorf("failed to decode content: %w", err)
+				}
+
+				if spec.Pad != nil {
+					value = spec.Pad.Unpad(value)
+				}
+
+				return value, read + prefBytes + 1, nil
+			}),
+		}),
 	},
 }

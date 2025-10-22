@@ -92,11 +92,11 @@ func IsoConvertToHex(msg []byte) ([]byte, error) {
 }
 
 func CreateIsoEchoTest(stan, bit32 string) ([]byte, error) {
-	isomessage := iso8583.NewMessage(Spec87Hex)
+	isomessage := iso8583.NewMessage(Spec87)
 
 	now := time.Now().UTC()
 	de7 := now.Format("0102150405")
-	de11 := fmt.Sprintf("%06s", stan)
+	de11 := fmt.Sprintf("%012s", stan)
 
 	err := isomessage.Field(7, de7)
 	if err != nil {
@@ -133,11 +133,11 @@ func CreateIsoEchoTest(stan, bit32 string) ([]byte, error) {
 }
 
 func CreateIsoSignOn(stan, bit32 string) ([]byte, error) {
-	isomessage := iso8583.NewMessage(Spec87Hex)
+	isomessage := iso8583.NewMessage(Spec87)
 
 	now := time.Now().UTC()
 	de7 := now.Format("0102150405")
-	de11 := fmt.Sprintf("%06s", stan)
+	de11 := fmt.Sprintf("%012s", stan)
 
 	err := isomessage.Field(7, de7)
 	if err != nil {
@@ -171,11 +171,11 @@ func CreateIsoSignOn(stan, bit32 string) ([]byte, error) {
 }
 
 func CreateIsoSignOff(stan, bit32 string) ([]byte, error) {
-	isomessage := iso8583.NewMessage(Spec87Hex)
+	isomessage := iso8583.NewMessage(Spec87)
 
 	now := time.Now().UTC()
 	de7 := now.Format("0102150405")
-	de11 := fmt.Sprintf("%06s", stan)
+	de11 := fmt.Sprintf("%012s", stan)
 
 	err := isomessage.Field(7, de7)
 	if err != nil {
@@ -209,11 +209,11 @@ func CreateIsoSignOff(stan, bit32 string) ([]byte, error) {
 }
 
 func CreateIsoNewKey(stan, bit32 string) ([]byte, error) {
-	isomessage := iso8583.NewMessage(Spec87Hex)
+	isomessage := iso8583.NewMessage(Spec87)
 
 	now := time.Now().UTC()
 	de7 := now.Format("0102150405")
-	de11 := fmt.Sprintf("%06s", stan)
+	de11 := fmt.Sprintf("%012s", stan)
 
 	err := isomessage.Field(7, de7)
 	if err != nil {
@@ -296,10 +296,15 @@ func CreateIsoResKeyChange(msg []byte) ([]byte, error) {
 	return msgSend, nil
 }
 
-func CreateIsoResLogon(msg []byte, bit48 string) ([]byte, error) {
-	isoStr := hex.EncodeToString(msg)
-	isomessage := iso8583.NewMessage(Spec87Hex)
+func CreateIsoResLogon(msg []byte, bit48, stan string) ([]byte, error) {
+	isoStr := string(msg)
+	isomessage := iso8583.NewMessage(Spec87)
 	err := isomessage.Unpack([]byte(isoStr))
+	if err != nil {
+		return nil, err
+	}
+
+	err = isomessage.Field(11, stan)
 	if err != nil {
 		return nil, err
 	}
@@ -320,18 +325,14 @@ func CreateIsoResLogon(msg []byte, bit48 string) ([]byte, error) {
 		return nil, err
 	}
 
-	iso8583.Describe(isomessage, os.Stdout)
+	// iso8583.Describe(isomessage, os.Stdout)
 
-	msgSend, err := hex.DecodeString(string(rawMessage))
-	if err != nil {
-		return nil, err
-	}
-	return msgSend, nil
+	return rawMessage, nil
 }
 
 func CreateIsoResReversal(msg []byte) ([]byte, error) {
 	isoStr := hex.EncodeToString(msg)
-	isomessage := iso8583.NewMessage(Spec87Hex)
+	isomessage := iso8583.NewMessage(Spec87)
 	err := isomessage.Unpack([]byte(isoStr))
 	if err != nil {
 		return nil, err

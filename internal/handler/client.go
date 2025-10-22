@@ -144,12 +144,17 @@ func (h *Handler) ClientHandler(conn net.Conn, sem chan struct{}, wg *sync.WaitG
 // balikan dari fungsi ini 1. message iso, 2. type 0=diteruskan ke host, 1=dibalikan ke client, 3. error
 func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 	isoReqString := strings.ToUpper(hex.EncodeToString(msg))
-	isomessage := iso8583.NewMessage(iso.Spec87Hex)
+	isoSend, err := iso.IsoConvertToAscii([]byte(isoReqString))
+	if err != nil {
+		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
+	}
 
-	if err := isomessage.Unpack([]byte(isoReqString)); err != nil {
+	isomessage := iso8583.NewMessage(iso.Spec87)
+
+	if err := isomessage.Unpack(isoSend); err != nil {
 		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack iso: %s", err), RC: RCErrGeneral}
 	}
-	iso8583.Describe(isomessage, os.Stdout)
+	// iso8583.Describe(isomessage, os.Stdout)
 
 	mti, err := isomessage.GetMTI()
 	if err != nil {
@@ -161,10 +166,10 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack stan: %s", err), RC: RCErrGeneral}
 	}
 
-	var isoSend []byte
+	// var isoSend []byte
 	var stanHost string
 	if stan != "" {
-		isoSend, stanHost, err = h.changeStanFromClient(msg)
+		isoSend, stanHost, err = h.changeStanFromClient(isoSend)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> change stan: %s", err), RC: RCErrGeneral}
 		}
@@ -179,7 +184,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack bit 70: %s", err), RC: RCErrGeneral}
 		}
 
-		isoSend, err = h.networkManagementCore(isomessage, msg, stanHost)
+		isoSend, err = h.networkManagementCore(isomessage, isoSend, stanHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
@@ -267,7 +272,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack mid: %s", err), RC: RCErrGeneral}
 		}
 
-		stanHost, err = repo.TransactionGetStanHost(context.Background(), h.db, &repo.TransactionHistory{
+		stanHostDB, err := repo.TransactionGetStanHost(context.Background(), h.db, &repo.TransactionHistory{
 			Mti:     "0200",
 			Procode: procode,
 			Amount:  amount,
@@ -279,28 +284,31 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> get stan host from db: %s", err), RC: RCErrGeneral}
 		}
 
-		if stanHost == "" {
+		if stanHostDB == "" {
+			delete(h.stanManage, stanHost)
+
 			isoSend, err := iso.CreateIsoResReversal(msg)
 			if err != nil {
 				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 			}
+
 			return isoSend, 0, 1, errorMessage{}
 		}
 
 		stanManage := StanManage{StanClient: stan, Duration: time.Now()}
-		h.stanManage[stanHost] = stanManage
+		h.stanManage[stanHostDB] = stanManage
 
-		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost)
+		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHostDB)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
 
-		err = isomessage.Field(11, stanHost)
+		err = isomessage.Field(11, stanHostDB)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set stan to iso: %s", err), RC: RCErrGeneral}
 		}
 
-		_, ok := h.reversalAdvice[tid+stanHost]
+		_, ok := h.reversalAdvice[tid+stanHostDB]
 		if !ok {
 			isomessage.MTI("0420")
 		} else {
@@ -313,11 +321,6 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 		}
 	} else {
 		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> invalid mti: %s", err), RC: RCErrInvalidTrx}
-	}
-
-	isoSend, err = iso.IsoConvertToAscii(isoSend)
-	if err != nil {
-		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 	}
 
 	return isoSend, idTrx, 0, errorMessage{}
@@ -362,8 +365,8 @@ func (h *Handler) changeStanFromClient(msg []byte) ([]byte, string, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	isoStr := hex.EncodeToString(msg)
-	isomessage := iso8583.NewMessage(iso.Spec87Hex)
+	isoStr := string(msg)
+	isomessage := iso8583.NewMessage(iso.Spec87)
 	err := isomessage.Unpack([]byte(isoStr))
 	if err != nil {
 		return nil, "", err
@@ -376,7 +379,7 @@ func (h *Handler) changeStanFromClient(msg []byte) ([]byte, string, error) {
 
 	stanClient = fmt.Sprintf("%06s", stanClient)
 	stanHostInt := h.stan
-	stanHost := fmt.Sprintf("%06d", stanHostInt)
+	stanHost := fmt.Sprintf("%012d", stanHostInt)
 
 	err = isomessage.Field(11, stanHost)
 	if err != nil {
@@ -462,6 +465,8 @@ func (h *Handler) transactionCore(isomessage *iso8583.Message, msg, stanHost str
 	if err != nil {
 		return 0, fmt.Errorf("transaction core -> unpack stan: %w", err)
 	}
+	stan = fmt.Sprintf("%06s", stan)
+
 	merhcantName, err := isomessage.GetString(43)
 	if err != nil {
 		return 0, fmt.Errorf("transaction core -> unpack merchant name: %w", err)
@@ -533,9 +538,20 @@ func (h *Handler) networkManagementCore(isomessage *iso8583.Message, msg []byte,
 			return nil, fmt.Errorf("network management -> save tpk: %w", err)
 		}
 
-		isoSend, err = iso.CreateIsoResLogon(msg, twk)
+		stan, err := isomessage.GetString(11)
+		if err != nil {
+			return nil, fmt.Errorf("network management -> unpack stan: %w", err)
+		}
+		delete(h.stanManage, stanHost)
+
+		isoSend, err = iso.CreateIsoResLogon(msg, twk, stan)
 		if err != nil {
 			return nil, fmt.Errorf("network management -> create res iso logon: %w", err)
+		}
+
+		isoSend, err = iso.IsoConvertToHex([]byte(isoSend))
+		if err != nil {
+			return nil, fmt.Errorf("network management -> convert res iso logon to hex: %w", err)
 		}
 	} else if bit70 == NetMgmtTypeSignOn {
 		isoSend, err = iso.CreateIsoSignOn(stanHost, bit32)

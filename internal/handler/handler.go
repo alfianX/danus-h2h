@@ -154,7 +154,7 @@ func (h *Handler) editConfig(newStan int64) error {
 		return err
 	}
 
-	if newStan == 999999 {
+	if newStan == 999999999999 {
 		newStan = 1
 	} else {
 		newStan = newStan + 1

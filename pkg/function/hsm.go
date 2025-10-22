@@ -96,7 +96,7 @@ func HSMTranslatePin(IPPORT, tpk, zpk, pinBlock, panParsed string) (string, erro
 	len := len(command)
 	lenHex := strings.ToUpper(fmt.Sprintf("%04x", len))
 	message := lenHex + hex.EncodeToString([]byte(command))
-	fmt.Println("translate pin : " + message)
+	// fmt.Println("translate pin : " + message)
 
 	response, err := SendMessageToHsm(IPPORT, message)
 	if err != nil {

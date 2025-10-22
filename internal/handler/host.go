@@ -95,7 +95,8 @@ func (h *Handler) hostHandler() {
 		fullMessage := append(header, messageBytes...)
 		isoStr := strings.ToUpper(string(fullMessage[2:]))
 
-		h.Log.Printf("from host : %s", isoStr)
+		// h.Log.Printf("from host : %s", isoStr)
+		h.Log.WithField("debug_tag", "ul_in").Debugf("message from host : %s", isoStr)
 
 		isomessage := iso8583.NewMessage(iso.Spec87)
 		err = isomessage.Unpack([]byte(isoStr))
@@ -132,7 +133,7 @@ func (h *Handler) hostHandler() {
 				h.Log.Errorf("host handler -> failed to get STAN: %v", err)
 				continue
 			}
-			stan = fmt.Sprintf("%06s", stan)
+			stan = fmt.Sprintf("%012s", stan)
 			value, ok := h.responseMap.Load(stan)
 			if !ok {
 				h.Log.Warnf("host handler -> Received unexpected host response for stan: %s. Ignoring.", stan)
@@ -165,6 +166,7 @@ func (h *Handler) sendNmm() {
 		return
 	}
 
+	h.Log.Infoln("send sign on..")
 	_, err = conn.Write(msgSignOn)
 	if err != nil {
 		h.Log.Errorf("send nmm -> failed to write sign on: %v", err)
@@ -223,6 +225,7 @@ func (h *Handler) sendNmm() {
 			return
 		}
 
+		h.Log.Infoln("send new key..")
 		_, err = conn.Write(msgIsoNewKey)
 		if err != nil {
 			h.Log.Errorf("send nmm -> failed to write new key: %v", err)
@@ -320,8 +323,6 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 		return
 	}
 
-	iso8583.Describe(isomessage, os.Stdout)
-
 	mti, err := isomessage.GetMTI()
 	if err != nil {
 		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack mti:", err)
@@ -332,7 +333,7 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack bit 11:", err)
 		return
 	}
-	stan = fmt.Sprintf("%06s", stan)
+	stan = fmt.Sprintf("%012s", stan)
 
 	// 1. Buat channel respons unik untuk transaksi ini
 	responseChan := make(chan HostResponse, 1)
@@ -353,6 +354,8 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 
 	h.Log.WithField("debug_tag", "ul_out").Debugf("message to host : %s", isoString)
 
+	iso8583.Describe(isomessage, os.Stdout)
+
 	_, err = hostConn.Write(msgSend)
 	if err != nil {
 		h.handleErrorAndRespond(conn, "", "96", "send single host handler - fail write to host:", err)
@@ -368,7 +371,7 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 			isoResponse := response.Data
 			isoResponseString := strings.ToUpper(string(isoResponse))
 
-			h.Log.WithField("debug_tag", "ul_in").Debugf("message from host : %s", isoResponseString)
+			// h.Log.WithField("debug_tag", "ul_in").Debugf("message from host : %s", isoResponseString)
 
 			isomessageRes := iso8583.NewMessage(iso.Spec87)
 			err = isomessageRes.Unpack([]byte(isoResponseString))
@@ -376,6 +379,8 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 				h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack iso:", err)
 				return
 			}
+
+			iso8583.Describe(isomessageRes, os.Stdout)
 
 			tx := h.db.Begin()
 			defer tx.Commit()
@@ -386,15 +391,15 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 				return
 			}
 
-			isoResponse, err = iso.IsoConvertToHex([]byte(isoResponseString))
-			if err != nil {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - ", err)
-				return
-			}
-
 			isoResponse, err = h.changeStanFromHost(isoResponse)
 			if err != nil {
 				h.handleErrorAndRespond(conn, "", "96", "send single host handler - change stan:", err)
+				return
+			}
+
+			isoResponse, err = iso.IsoConvertToHex([]byte(isoResponse))
+			if err != nil {
+				h.handleErrorAndRespond(conn, "", "96", "send single host handler - ", err)
 				return
 			}
 			isoResponseString = hex.EncodeToString(isoResponse)
@@ -472,8 +477,8 @@ func (h *Handler) changeStanFromHost(msg []byte) ([]byte, error) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	isoStr := hex.EncodeToString(msg)
-	isomessage := iso8583.NewMessage(iso.Spec87Hex)
+	isoStr := string(msg)
+	isomessage := iso8583.NewMessage(iso.Spec87)
 	err := isomessage.Unpack([]byte(isoStr))
 	if err != nil {
 		return nil, err
@@ -483,6 +488,7 @@ func (h *Handler) changeStanFromHost(msg []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	stanHost = fmt.Sprintf("%012s", stanHost)
 
 	stanData, ok := h.stanManage[stanHost]
 	if !ok {
@@ -502,12 +508,7 @@ func (h *Handler) changeStanFromHost(msg []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	msgSend, err := hex.DecodeString(string(newMsg))
-	if err != nil {
-		return nil, err
-	}
-
-	return msgSend, nil
+	return newMsg, nil
 }
 
 func (h *Handler) networkManagementHandler(msg []byte) {
@@ -574,7 +575,8 @@ func (h *Handler) networkManagementHandler(msg []byte) {
 		return
 	}
 
-	h.Log.Printf("send response to host: %s", string(isoResponse))
+	// h.Log.Printf("send response to host: %s", string(isoResponse))
+	h.Log.WithField("debug_tag", "ul_out").Debugf("response to host : %s", isoResponse)
 
 	_, err = h.hostConn.Write(msgSend)
 	if err != nil {
@@ -591,77 +593,83 @@ func (h *Handler) HostHealthCheck(ctx context.Context) {
 	for {
 		select {
 		case <-ticker.C:
-			serverAddress := fmt.Sprintf("127.0.0.1:%d", h.Config.ListenPort)
-			conn, err := net.Dial("tcp", serverAddress)
-			if err != nil {
-				h.Log.Errorf("cron echo test -> failed to connect to host %s: %v", serverAddress, err)
-				continue
-			}
+			h.hostConnLock.Lock()
+			hostConn := h.hostConn
+			h.hostConnLock.Unlock()
 
-			isoEchoTest := "002860001900000800822000010000000004000000000000001008081740000002111234567890100301"
-			msgEchoTest, err := hex.DecodeString(isoEchoTest)
-			if err != nil {
-				h.Log.Errorf("cron echo test -> failed to decode msg echo test: %v", err)
-				continue
-			}
-
-			h.Log.Info("send echo test..")
-			_, err = conn.Write(msgEchoTest)
-			if err != nil {
-				h.Log.Errorf("cron echo test -> failed to write echo test: %v", err)
-				continue
-			}
-
-			header := make([]byte, 2)
-			_, err = io.ReadFull(conn, header)
-			if err != nil {
-				if err == io.EOF {
-					h.Log.Warnf("cron echo test -> Host connection closed gracefully.")
-				} else {
-					h.Log.Errorf("cron echo test -> failed read header response echo test: %v", err)
+			if hostConn != nil {
+				serverAddress := fmt.Sprintf("127.0.0.1:%d", h.Config.ListenPort)
+				conn, err := net.Dial("tcp", serverAddress)
+				if err != nil {
+					h.Log.Errorf("cron echo test -> failed to connect to host %s: %v", serverAddress, err)
+					continue
 				}
-				continue
-			}
 
-			headerStr := hex.EncodeToString(header)
-			msgLength, err := strconv.ParseInt(headerStr, 16, 64)
-			if err != nil {
-				h.Log.Errorf("cron echo test -> failed to parse length echo test: %v", err)
-				continue
-			}
-
-			messageBytes := make([]byte, msgLength)
-			_, err = io.ReadFull(conn, messageBytes)
-			if err != nil {
-				if err == io.EOF {
-					h.Log.Warnf("cron echo test -> Host connection closed gracefully.")
-				} else {
-					h.Log.Errorf("cron echo test -> failed read body response echo test: %v", err)
+				isoEchoTest := "002860001900000800822000010000000004000000000000001008081740000002111234567890100301"
+				msgEchoTest, err := hex.DecodeString(isoEchoTest)
+				if err != nil {
+					h.Log.Errorf("cron echo test -> failed to decode msg echo test: %v", err)
+					continue
 				}
-				continue
-			}
 
-			conn.Close()
+				h.Log.Info("send echo test..")
+				_, err = conn.Write(msgEchoTest)
+				if err != nil {
+					h.Log.Errorf("cron echo test -> failed to write echo test: %v", err)
+					continue
+				}
 
-			fullMessage := append(header, messageBytes...)
-			isoResString := strings.ToUpper(hex.EncodeToString(fullMessage))
+				header := make([]byte, 2)
+				_, err = io.ReadFull(conn, header)
+				if err != nil {
+					if err == io.EOF {
+						h.Log.Warnf("cron echo test -> Host connection closed gracefully.")
+					} else {
+						h.Log.Errorf("cron echo test -> failed read header response echo test: %v", err)
+					}
+					continue
+				}
 
-			isomessage := iso8583.NewMessage(iso.Spec87Hex)
-			if err := isomessage.Unpack([]byte(isoResString[14:])); err != nil {
-				h.Log.Errorf("cron echo test -> failed to unpack response echo test: %v", err)
-				continue
-			}
+				headerStr := hex.EncodeToString(header)
+				msgLength, err := strconv.ParseInt(headerStr, 16, 64)
+				if err != nil {
+					h.Log.Errorf("cron echo test -> failed to parse length echo test: %v", err)
+					continue
+				}
 
-			responseCode, err := isomessage.GetString(39)
-			if err != nil {
-				h.Log.Errorf("cron echo test -> failed to unpack bit 39 response echo test: %v", err)
-				continue
-			}
+				messageBytes := make([]byte, msgLength)
+				_, err = io.ReadFull(conn, messageBytes)
+				if err != nil {
+					if err == io.EOF {
+						h.Log.Warnf("cron echo test -> Host connection closed gracefully.")
+					} else {
+						h.Log.Errorf("cron echo test -> failed read body response echo test: %v", err)
+					}
+					continue
+				}
 
-			if responseCode == "00" {
-				h.Log.Info("echo test ok")
-			} else {
-				h.Log.Infof("echo test not ok, rc %s", responseCode)
+				conn.Close()
+
+				fullMessage := append(header, messageBytes...)
+				isoResString := strings.ToUpper(hex.EncodeToString(fullMessage))
+
+				isomessage := iso8583.NewMessage(iso.Spec87Hex)
+				if err := isomessage.Unpack([]byte(isoResString[14:])); err != nil {
+					h.Log.Errorf("cron echo test -> failed to unpack response echo test: %v", err)
+					continue
+				}
+
+				responseCode, err := isomessage.GetString(39)
+				if err != nil {
+					h.Log.Errorf("cron echo test -> failed to unpack bit 39 response echo test: %v", err)
+					continue
+				}
+
+				if responseCode == "00" {
+					h.Log.Info("echo test ok")
+				} else {
+					h.Log.Infof("echo test not ok, rc %s", responseCode)
+				}
 			}
 		case <-ctx.Done(): // ✅ Deteksi sinyal pembatalan
 			h.Log.Info("Host health check goroutine received context done signal. Stopping.")
