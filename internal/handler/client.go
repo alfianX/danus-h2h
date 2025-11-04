@@ -65,12 +65,12 @@ func (h *Handler) ClientHandler(conn net.Conn, sem chan struct{}, wg *sync.WaitG
 		headerStr := hex.EncodeToString(header)
 		msgLength, err := strconv.ParseInt(headerStr, HexBase, IntBitSize)
 		if err != nil {
-			h.handleErrorAndRespond(conn, "", RCErrGeneral, "client handler - parse int msg length:", err)
+			h.handleErrorAndRespond(conn, "", RCErrFormatError, "client handler - parse int msg length:", err)
 			return
 		}
 
 		if msgLength <= 0 || msgLength > MaxMessageLength {
-			h.handleErrorAndRespond(conn, "", RCErrGeneral, "client handler - invalid message length", nil)
+			h.handleErrorAndRespond(conn, "", RCErrFormatError, "client handler - invalid message length", nil)
 			return
 		}
 
@@ -174,7 +174,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> change stan: %s", err), RC: RCErrGeneral}
 		}
 	} else {
-		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> stan empty %s", ""), RC: "30"}
+		return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> stan empty %s", ""), RC: RCErrFormatError}
 	}
 
 	var idTrx int64

@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	version     = "1.0.0" // Application version
+	version     = "1.1.2" // Application version
 	showVersion = flag.Bool("version", false, "Display the application version")
 )
 

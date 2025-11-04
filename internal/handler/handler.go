@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net"
 	"os"
@@ -10,10 +11,13 @@ import (
 
 	"github.com/alfianX/danus-h2h/config"
 	"github.com/alfianX/danus-h2h/internal/repo"
+	f "github.com/alfianX/danus-h2h/pkg/function"
 	"github.com/alfianX/danus-h2h/pkg/iso"
 	"github.com/alfianX/danus-h2h/pkg/license"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 const (
@@ -25,6 +29,7 @@ const (
 	RCErrGeneral       = "96"
 	RCErrLicense       = "15"
 	RCErrInvalidTrx    = "12"
+	RCErrFormatError   = "30"
 	NetMgmtTypeLogon   = "101"
 	NetMgmtTypeSignOn  = "001"
 	NetMgmtTypeSignOff = "002"
@@ -71,7 +76,14 @@ type Handler struct {
 func NewHandler(cnf config.Config, log *logrus.Logger) (*Handler, error) {
 	sc := make(chan []byte)
 
-	volumesn := license.GetVolume()
+	var volumesn string
+	if f.IsRunningInContainer() {
+		fmt.Println("docker nih")
+		volumesn = license.GetVolumeDocker("/host-root")
+	} else {
+		fmt.Println("biasa nih")
+		volumesn = license.GetVolume()
+	}
 
 	db, err := repo.InitDSN(cnf.Database)
 	if err != nil {

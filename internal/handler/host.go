@@ -159,7 +159,7 @@ func (h *Handler) sendNmm() {
 		return
 	}
 
-	isoSignOn := "002860001900000800822000010000000004000000000000001008081740000002111234567890100001"
+	isoSignOn := "0024600019000008008220000100000000040000000000000010080817400000020362800001"
 	msgSignOn, err := hex.DecodeString(isoSignOn)
 	if err != nil {
 		h.Log.Errorf("send nmm -> failed to decode msg sign on: %v", err)
@@ -218,7 +218,7 @@ func (h *Handler) sendNmm() {
 			return
 		}
 
-		isoNewKey := "002860001900000800822000010000000004000000000000001008081740000002111234567890100102"
+		isoNewKey := "0024600019000008008220000100000000040000000000000010080817400000020362800102"
 		msgIsoNewKey, err := hex.DecodeString(isoNewKey)
 		if err != nil {
 			h.Log.Errorf("send nmm -> failed to decode msg new key: %v", err)
@@ -313,24 +313,24 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 	h.hostConnLock.Unlock()
 
 	if hostConn == nil {
-		h.handleErrorAndRespond(conn, "", "96", "send single host handler -> host is not connected", fmt.Errorf("host not connected"))
+		h.handleErrorAndRespond(conn, "", "91", "send single host handler -> host is not connected", fmt.Errorf("host not connected"))
 		return
 	}
 
 	isomessage := iso8583.NewMessage(iso.Spec87)
 	if err := isomessage.Unpack(msg); err != nil {
-		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack iso:", err)
+		h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack iso:", err)
 		return
 	}
 
 	mti, err := isomessage.GetMTI()
 	if err != nil {
-		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack mti:", err)
+		h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack mti:", err)
 		return
 	}
 	stan, err := isomessage.GetString(11)
 	if err != nil {
-		h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack bit 11:", err)
+		h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 11:", err)
 		return
 	}
 	stan = fmt.Sprintf("%012s", stan)
@@ -348,7 +348,7 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 	msgWlen := fmt.Sprintf("%04X%s", i, hostMsg)
 	msgSend, err := hex.DecodeString(msgWlen)
 	if err != nil {
-		h.handleErrorAndRespond(conn, "", "96", "send single host handler - fail decode iso:", err)
+		h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - fail decode iso:", err)
 		return
 	}
 
@@ -358,14 +358,14 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 
 	_, err = hostConn.Write(msgSend)
 	if err != nil {
-		h.handleErrorAndRespond(conn, "", "96", "send single host handler - fail write to host:", err)
+		h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - fail write to host:", err)
 		return
 	}
 
 	select {
 	case response := <-responseChan:
 		if response.Err != nil {
-			h.handleErrorAndRespond(conn, "", "96", "response from host had an error", response.Err)
+			h.handleErrorAndRespond(conn, "", RCErrGeneral, "response from host had an error", response.Err)
 			return
 		} else {
 			isoResponse := response.Data
@@ -376,7 +376,7 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 			isomessageRes := iso8583.NewMessage(iso.Spec87)
 			err = isomessageRes.Unpack([]byte(isoResponseString))
 			if err != nil {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack iso:", err)
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack iso:", err)
 				return
 			}
 
@@ -387,19 +387,19 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 
 			bit39, err := isomessageRes.GetString(39)
 			if err != nil {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack bit 39:", err)
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
 				return
 			}
 
 			isoResponse, err = h.changeStanFromHost(isoResponse)
 			if err != nil {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - change stan:", err)
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - change stan:", err)
 				return
 			}
 
 			isoResponse, err = iso.IsoConvertToHex([]byte(isoResponse))
 			if err != nil {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - ", err)
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - ", err)
 				return
 			}
 			isoResponseString = hex.EncodeToString(isoResponse)
@@ -412,7 +412,7 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 					UpdatedAt:    time.Now(),
 				})
 				if err != nil {
-					h.handleErrorAndRespond(conn, "", "96", "send single host handler - update response trx:", err)
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - update response trx:", err)
 					return
 				}
 			}
@@ -422,19 +422,19 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 				err = isomessageRes.Unpack([]byte(isoResponseString))
 				if err != nil {
 					tx.Rollback()
-					h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack iso:", err)
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack iso:", err)
 					return
 				}
 				tid, err := isomessageRes.GetString(41)
 				if err != nil {
 					tx.Rollback()
-					h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack bit 39:", err)
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
 					return
 				}
 				stanClient, err := isomessageRes.GetString(11)
 				if err != nil {
 					tx.Rollback()
-					h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack bit 39:", err)
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
 					return
 				}
 				stanClient = fmt.Sprintf("%06s", stanClient)
@@ -451,13 +451,13 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 		case "0420":
 			stanData, ok := h.stanManage[stan]
 			if !ok {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - stan "+stan+" not found in map", err)
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - stan "+stan+" not found in map", err)
 				return
 			}
 			stanClient := stanData.StanClient
 			tid, err := isomessage.GetString(41)
 			if err != nil {
-				h.handleErrorAndRespond(conn, "", "96", "send single host handler - unpack bit 41:", err)
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 41:", err)
 				return
 			}
 
@@ -466,10 +466,12 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 			return
 		case "0421":
 			return
-		default:
-			return
+			// default:
+			// 	return
 		}
-		// h.handleErrorAndRespond(conn, "", "96", "send single host handler - timeout", fmt.Errorf("timeout waiting for host response"))
+	case <-time.After(120 * time.Second):
+		return
+		// h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - timeout", fmt.Errorf("timeout waiting for host response"))
 	}
 }
 
@@ -605,7 +607,7 @@ func (h *Handler) HostHealthCheck(ctx context.Context) {
 					continue
 				}
 
-				isoEchoTest := "002860001900000800822000010000000004000000000000001008081740000002111234567890100301"
+				isoEchoTest := "0024600019000008008220000100000000040000000000000010080817400000020362800301"
 				msgEchoTest, err := hex.DecodeString(isoEchoTest)
 				if err != nil {
 					h.Log.Errorf("cron echo test -> failed to decode msg echo test: %v", err)

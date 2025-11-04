@@ -1,0 +1,26 @@
+services:
+  danus_h2h:
+    build:
+      context: . # Merujuk ke direktori saat ini (tempat Dockerfile berada)
+      dockerfile: Dockerfile
+    # image: azizalfian/panin_mw:v1.0.0
+    container_name: cn_danus_h2h
+    restart: on-failure
+    ports:
+      # Jika aplikasi Go Anda menjalankan HTTP server di port 8080
+      - "2234:2234"
+    volumes:
+      - /:/host-root:ro
+    environment:
+      # Variabel lingkungan yang akan digunakan Go API
+      MODE: debug
+      LISTEN: 2234
+      HOST_ADDRESS: host.docker.internal:9824
+      MYSQL_DSN: "root:root123@tcp(host.docker.internal:3366)/danus_h2h"
+      #HSM
+      HSM_ADDRESS: 146.196.106.202:3421
+      TIMEOUT_TRX: 60
+      TIMEOUT_INACTIVITY: 30
+      DEBUG_LOG: 1
+      ECHO_TEST_TIME: 30
+      LICENSE_KEY: 2BABA0BB8FFA9A48D458BBBEBF8789A1
