@@ -8,4 +8,4 @@
 /cmd/service/.env
 /cmd/standalone/.env
 
-.docker-compose.yml
+docker-compose.yml
