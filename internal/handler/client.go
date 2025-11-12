@@ -193,6 +193,18 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return isoSend, 0, 1, errorMessage{}
 		}
 	} else if mti == "0200" {
+		t := time.Now().UTC()
+		jdn := f.JulianDayNumber(t)
+		stanHostInt, err := strconv.Atoi(stanHost)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
+		}
+
+		err = isomessage.Field(37, fmt.Sprintf("%06d%06d", jdn%1000000, stanHostInt))
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
+		}
+
 		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
@@ -263,6 +275,26 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> convert amount: %s", err), RC: RCErrGeneral}
 			}
 		}
+
+		bit12, err := isomessage.GetString(12)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack bit 12: %s", err), RC: RCErrGeneral}
+		}
+		bit13, err := isomessage.GetString(13)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack bit 13: %s", err), RC: RCErrGeneral}
+		}
+		loc, _ := time.LoadLocation("Asia/Jakarta")
+		var trxDate *time.Time
+		if bit12 != "" && bit13 != "" {
+			trxDateStr := strconv.Itoa(time.Now().Year()) + "-" + bit13[:2] + "-" + bit13[2:4] + " " + bit12[:2] + ":" + bit12[2:4] + ":" + bit12[4:6]
+			trxDateOri, err := time.ParseInLocation("2006-01-02 15:04:05", trxDateStr, loc)
+			if err != nil {
+				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> conver datetime: %s", err), RC: RCErrGeneral}
+			}
+			trxDate = &trxDateOri
+		}
+
 		tid, err := isomessage.GetString(41)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack tid: %s", err), RC: RCErrGeneral}
@@ -272,13 +304,15 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack mid: %s", err), RC: RCErrGeneral}
 		}
 
+		stanClient := fmt.Sprintf("%06s", stan)
 		stanHostDB, err := repo.TransactionGetStanHost(context.Background(), h.db, &repo.TransactionHistory{
 			Mti:     "0200",
 			Procode: procode,
 			Amount:  amount,
-			Stan:    stan,
+			Stan:    stanClient,
 			Tid:     tid,
 			Mid:     mid,
+			TrxDate: trxDate,
 		})
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> get stan host from db: %s", err), RC: RCErrGeneral}

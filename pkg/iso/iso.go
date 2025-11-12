@@ -332,7 +332,7 @@ func CreateIsoResLogon(msg []byte, bit48, stan string) ([]byte, error) {
 
 func CreateIsoResReversal(msg []byte) ([]byte, error) {
 	isoStr := hex.EncodeToString(msg)
-	isomessage := iso8583.NewMessage(Spec87)
+	isomessage := iso8583.NewMessage(Spec87Hex)
 	err := isomessage.Unpack([]byte(isoStr))
 	if err != nil {
 		return nil, err

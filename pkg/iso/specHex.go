@@ -1525,7 +1525,7 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 		60: field.NewString(&field.Spec{
 			Length:      999,
 			Description: "Reserved (National)",
-			Enc:         encoding.ASCII,
+			Enc:         encoding.BytesToASCIIHex,
 			Pref:        prefix.ASCII.LLL,
 			Packer: field.PackerFunc(func(value []byte, spec *field.Spec) ([]byte, error) {
 				if spec.Pad != nil {

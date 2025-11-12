@@ -1,6 +1,9 @@
 package function
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 func MaskPan(pan string) string {
 	if pan != "" {
@@ -21,4 +24,22 @@ func PadRightZero(s string, totalLength int) string {
 		return s
 	}
 	return s + strings.Repeat("0", totalLength-len(s))
+}
+
+func JulianDayNumber(t time.Time) int {
+	year, month, day := t.Date()
+
+	if month <= 2 {
+		year--
+		month += 12
+	}
+
+	a := year / 100
+	b := 2 - a + a/4
+
+	jdn := int(365.25*float64(year+4716)) +
+		int(30.6001*float64(month+1)) +
+		day + b - 1524
+
+	return jdn
 }

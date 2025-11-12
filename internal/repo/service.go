@@ -67,8 +67,8 @@ func TransactionHistoryGetDataWD(ctx context.Context, db *gorm.DB, data *Transac
 func TransactionGetStanHost(ctx context.Context, db *gorm.DB, data *TransactionHistory) (string, error) {
 	var trxHistory TransactionHistory
 	result := db.WithContext(ctx).Select("stan_host").Order("stan_host DESC").
-		Where("mti = ? AND procode = ? AND amount = ? AND stan = ? AND tid = ? AND  mid = ?",
-			data.Mti, data.Procode, data.Amount, data.Stan, data.Tid, data.Mid).
+		Where("mti = ? AND procode = ? AND amount = ? AND stan = ? AND tid = ? AND  mid = ? AND trx_date = ?",
+			data.Mti, data.Procode, data.Amount, data.Stan, data.Tid, data.Mid, data.TrxDate).
 		First(&trxHistory)
 
 	if result.Error != nil {

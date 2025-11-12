@@ -68,13 +68,12 @@ func main() {
 	select {
 	case <-done:
 		// Goroutine finished within the timeout
+		log.Println("All goroutines have finished. Exiting.")
 	case <-time.After(5 * time.Second):
 		// Timeout occurred, force exit
 		log.Println("Graceful shutdown timed out, forcing exit.")
 		os.Exit(1)
 	}
-
-	log.Println("All goroutines have finished. Exiting.")
 }
 
 func run(ctx context.Context) error {

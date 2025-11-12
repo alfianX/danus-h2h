@@ -362,116 +362,123 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 		return
 	}
 
-	select {
-	case response := <-responseChan:
-		if response.Err != nil {
-			h.handleErrorAndRespond(conn, "", RCErrGeneral, "response from host had an error", response.Err)
-			return
-		} else {
-			isoResponse := response.Data
-			isoResponseString := strings.ToUpper(string(isoResponse))
+	timeout60 := time.After(60 * time.Second)
+	timeout120 := time.After(120 * time.Second)
 
-			// h.Log.WithField("debug_tag", "ul_in").Debugf("message from host : %s", isoResponseString)
-
-			isomessageRes := iso8583.NewMessage(iso.Spec87)
-			err = isomessageRes.Unpack([]byte(isoResponseString))
-			if err != nil {
-				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack iso:", err)
+	for {
+		select {
+		case response := <-responseChan:
+			if response.Err != nil {
+				h.handleErrorAndRespond(conn, "", RCErrGeneral, "response from host had an error", response.Err)
 				return
-			}
+			} else {
+				isoResponse := response.Data
+				isoResponseString := strings.ToUpper(string(isoResponse))
 
-			iso8583.Describe(isomessageRes, os.Stdout)
+				// h.Log.WithField("debug_tag", "ul_in").Debugf("message from host : %s", isoResponseString)
 
-			tx := h.db.Begin()
-			defer tx.Commit()
-
-			bit39, err := isomessageRes.GetString(39)
-			if err != nil {
-				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
-				return
-			}
-
-			isoResponse, err = h.changeStanFromHost(isoResponse)
-			if err != nil {
-				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - change stan:", err)
-				return
-			}
-
-			isoResponse, err = iso.IsoConvertToHex([]byte(isoResponse))
-			if err != nil {
-				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - ", err)
-				return
-			}
-			isoResponseString = hex.EncodeToString(isoResponse)
-
-			if idTrx != 0 {
-				err = repo.TransactionHistoryUpdateResponse(context.Background(), tx, &repo.TransactionHistory{
-					ID:           idTrx,
-					ResponseCode: bit39,
-					IsoRes:       isoResponseString,
-					UpdatedAt:    time.Now(),
-				})
-				if err != nil {
-					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - update response trx:", err)
-					return
-				}
-			}
-
-			if mti == "0421" && bit39 == "00" {
-				isomessageRes := iso8583.NewMessage(iso.Spec87Hex)
+				isomessageRes := iso8583.NewMessage(iso.Spec87)
 				err = isomessageRes.Unpack([]byte(isoResponseString))
 				if err != nil {
-					tx.Rollback()
 					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack iso:", err)
 					return
 				}
-				tid, err := isomessageRes.GetString(41)
+
+				iso8583.Describe(isomessageRes, os.Stdout)
+
+				tx := h.db.Begin()
+				defer tx.Commit()
+
+				bit39, err := isomessageRes.GetString(39)
 				if err != nil {
-					tx.Rollback()
 					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
 					return
 				}
-				stanClient, err := isomessageRes.GetString(11)
+
+				isoResponse, err = h.changeStanFromHost(isoResponse)
 				if err != nil {
-					tx.Rollback()
-					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - change stan:", err)
 					return
 				}
-				stanClient = fmt.Sprintf("%06s", stanClient)
 
-				delete(h.reversalAdvice, tid+stanClient)
+				isoResponse, err = iso.IsoConvertToHex([]byte(isoResponse))
+				if err != nil {
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - ", err)
+					return
+				}
+				isoResponseString = hex.EncodeToString(isoResponse)
+
+				if idTrx != 0 {
+					err = repo.TransactionHistoryUpdateResponse(context.Background(), tx, &repo.TransactionHistory{
+						ID:           idTrx,
+						ResponseCode: bit39,
+						IsoRes:       isoResponseString,
+						UpdatedAt:    time.Now(),
+					})
+					if err != nil {
+						h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - update response trx:", err)
+						return
+					}
+				}
+
+				if mti == "0421" && bit39 == "00" {
+					isomessageRes := iso8583.NewMessage(iso.Spec87Hex)
+					err = isomessageRes.Unpack([]byte(isoResponseString))
+					if err != nil {
+						tx.Rollback()
+						h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack iso:", err)
+						return
+					}
+					tid, err := isomessageRes.GetString(41)
+					if err != nil {
+						tx.Rollback()
+						h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
+						return
+					}
+					stanClient, err := isomessageRes.GetString(11)
+					if err != nil {
+						tx.Rollback()
+						h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 39:", err)
+						return
+					}
+					stanClient = fmt.Sprintf("%06s", stanClient)
+
+					delete(h.reversalAdvice, tid+stanClient)
+				}
+
+				tx.Commit()
+
+				go h.sendBackHandler(isoResponse, conn)
 			}
+		case <-timeout60:
+			switch mti {
+			case "0420":
+				stanData, ok := h.stanManage[stan]
+				if !ok {
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - stan "+stan+" not found in map", err)
+					return
+				}
+				stanClient := stanData.StanClient
+				tid, err := isomessage.GetString(41)
+				if err != nil {
+					h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 41:", err)
+					return
+				}
 
-			tx.Commit()
-
-			go h.sendBackHandler(isoResponse, conn)
-		}
-	case <-time.After(60 * time.Second):
-		switch mti {
-		case "0420":
-			stanData, ok := h.stanManage[stan]
-			if !ok {
-				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - stan "+stan+" not found in map", err)
+				reversalAvc := ReversalAdvice{Data: msg}
+				h.reversalAdvice[tid+stanClient] = reversalAvc
 				return
-			}
-			stanClient := stanData.StanClient
-			tid, err := isomessage.GetString(41)
-			if err != nil {
-				h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - unpack bit 41:", err)
+			case "0421":
 				return
+			default:
+
 			}
 
-			reversalAvc := ReversalAdvice{Data: msg}
-			h.reversalAdvice[tid+stanClient] = reversalAvc
+			timeout60 = nil
+		case <-timeout120:
+			h.handleErrorAndRespond(conn, "", "T0", "send single host handler - timeout", fmt.Errorf("timeout waiting for host response"))
 			return
-		case "0421":
-			return
-			// default:
-			// 	return
 		}
-	case <-time.After(120 * time.Second):
-		return
-		// h.handleErrorAndRespond(conn, "", RCErrGeneral, "send single host handler - timeout", fmt.Errorf("timeout waiting for host response"))
 	}
 }
 
