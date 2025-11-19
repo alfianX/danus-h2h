@@ -449,6 +449,8 @@ func (h *Handler) sendSingleHostHandler(conn net.Conn, msg []byte, idTrx int64) 
 				tx.Commit()
 
 				go h.sendBackHandler(isoResponse, conn)
+
+				return
 			}
 		case <-timeout60:
 			switch mti {
