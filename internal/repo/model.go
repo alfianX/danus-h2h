@@ -23,6 +23,7 @@ type TransactionHistory struct {
 	Stan         string     `json:"stan"`
 	StanHost     string     `json:"stan_host"`
 	Rrn          string     `json:"rrn"`
+	RrnHost      string     `json:"rrn_host"`
 	MerchantName string     `json:"merchant_name"`
 	ResponseCode string     `json:"response_code"`
 	IsoReq       string     `json:"iso_req"`

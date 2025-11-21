@@ -199,13 +199,14 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
+		rrnHost := fmt.Sprintf("%06d%06d", jdn%1000000, stanHostInt)
 
-		err = isomessage.Field(37, fmt.Sprintf("%06d%06d", jdn%1000000, stanHostInt))
+		err = isomessage.Field(37, rrnHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
 
-		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost)
+		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost, rrnHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
@@ -304,12 +305,16 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack mid: %s", err), RC: RCErrGeneral}
 		}
 
-		stanClient := fmt.Sprintf("%06s", stan)
-		stanHostDB, err := repo.TransactionGetStanHost(context.Background(), h.db, &repo.TransactionHistory{
+		rrn, err := isomessage.GetString(37)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack rrn: %s", err), RC: RCErrGeneral}
+		}
+
+		rrnHostDB, err := repo.TransactionGetRRNHost(context.Background(), h.db, &repo.TransactionHistory{
 			Mti:     "0200",
 			Procode: procode,
 			Amount:  amount,
-			Stan:    stanClient,
+			Rrn:     rrn,
 			Tid:     tid,
 			Mid:     mid,
 			TrxDate: trxDate,
@@ -318,7 +323,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> get stan host from db: %s", err), RC: RCErrGeneral}
 		}
 
-		if stanHostDB == "" {
+		if rrnHostDB == "" {
 			delete(h.stanManage, stanHost)
 
 			isoSend, err := iso.CreateIsoResReversal(msg)
@@ -329,20 +334,17 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return isoSend, 0, 1, errorMessage{}
 		}
 
-		stanManage := StanManage{StanClient: stan, Duration: time.Now()}
-		h.stanManage[stanHostDB] = stanManage
+		err = isomessage.Field(37, rrnHostDB)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set rrn to iso: %s", err), RC: RCErrGeneral}
+		}
 
-		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHostDB)
+		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost, rrnHostDB)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
 
-		err = isomessage.Field(11, stanHostDB)
-		if err != nil {
-			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set stan to iso: %s", err), RC: RCErrGeneral}
-		}
-
-		_, ok := h.reversalAdvice[tid+stanHostDB]
+		_, ok := h.reversalAdvice[tid+stanHost]
 		if !ok {
 			isomessage.MTI("0420")
 		} else {
@@ -441,7 +443,7 @@ func (h *Handler) changeStanFromClient(msg []byte) ([]byte, string, error) {
 	return newMsg, stanHost, nil
 }
 
-func (h *Handler) transactionCore(isomessage *iso8583.Message, msg, stanHost string) (int64, error) {
+func (h *Handler) transactionCore(isomessage *iso8583.Message, msg, stanHost, rrnHost string) (int64, error) {
 	mti, err := isomessage.GetMTI()
 	if err != nil {
 		return 0, fmt.Errorf("transaction core -> get mti: %w", err)
@@ -521,6 +523,7 @@ func (h *Handler) transactionCore(isomessage *iso8583.Message, msg, stanHost str
 		Stan:         stan,
 		StanHost:     stanHost,
 		Rrn:          rrn,
+		RrnHost:      rrnHost,
 		MerchantName: merhcantName,
 		IsoReq:       msg,
 		CreatedAt:    time.Now(),
