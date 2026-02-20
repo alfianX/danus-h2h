@@ -1577,7 +1577,7 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 		61: field.NewString(&field.Spec{
 			Length:      999,
 			Description: "Reserved (Private)",
-			Enc:         encoding.ASCII,
+			Enc:         encoding.BytesToASCIIHex,
 			Pref:        prefix.ASCII.LLL,
 			Packer: field.PackerFunc(func(value []byte, spec *field.Spec) ([]byte, error) {
 				if spec.Pad != nil {
@@ -1807,10 +1807,51 @@ var Spec87Hex *iso8583.MessageSpec = &iso8583.MessageSpec{
 			}),
 		}),
 		90: field.NewString(&field.Spec{
-			Length:      42,
+			Length:      60,
 			Description: "Original Data Elements",
-			Enc:         encoding.ASCII,
+			Enc:         encoding.BytesToASCIIHex,
 			Pref:        prefix.ASCII.Fixed,
+			Pad:         padding.Right(' '),
+			Packer: field.PackerFunc(func(value []byte, spec *field.Spec) ([]byte, error) {
+				if spec.Pad != nil {
+					value = spec.Pad.Pad(value, spec.Length)
+				}
+
+				encodedValue, err := spec.Enc.Encode(value)
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode content: %w", err)
+				}
+
+				// Encode the length of the packed data, not the length of the value
+				maxLength := spec.Length
+
+				// Encode the length of the encoded value
+				lengthPrefix, err := spec.Pref.EncodeLength(maxLength, len(encodedValue)/2)
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode length: %w", err)
+				}
+
+				return append(lengthPrefix, encodedValue...), nil
+			}),
+			Unpacker: field.UnpackerFunc(func(packedFieldValue []byte, spec *field.Spec) ([]byte, int, error) {
+				maxEncodedValueLength := spec.Length
+
+				encodedValueLength, prefBytes, err := spec.Pref.DecodeLength(maxEncodedValueLength, packedFieldValue)
+				if err != nil {
+					return nil, 0, fmt.Errorf("failed to decode length: %w", err)
+				}
+
+				// for BCD encoding, the length of the packed data is twice the length of the encoded value
+				valueLength := encodedValueLength
+
+				// Decode the packed data length
+				value, read, err := spec.Enc.Decode(packedFieldValue[prefBytes:], valueLength)
+				if err != nil {
+					return nil, 0, fmt.Errorf("failed to decode content: %w", err)
+				}
+
+				return value, read + prefBytes, nil
+			}),
 		}),
 		98: field.NewString(&field.Spec{
 			Length:      25,

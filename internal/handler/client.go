@@ -201,12 +201,12 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 		}
 		rrnHost := fmt.Sprintf("%06d%06d", jdn%1000000, stanHostInt)
 
-		err = isomessage.Field(37, rrnHost)
+		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost, rrnHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
 
-		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost, rrnHost)
+		err = isomessage.Field(37, rrnHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
 		}
@@ -275,6 +275,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			if err != nil {
 				return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> convert amount: %s", err), RC: RCErrGeneral}
 			}
+			amount = amount / 100
 		}
 
 		bit12, err := isomessage.GetString(12)
@@ -310,7 +311,15 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack rrn: %s", err), RC: RCErrGeneral}
 		}
 
-		rrnHostDB, err := repo.TransactionGetRRNHost(context.Background(), h.db, &repo.TransactionHistory{
+		t := time.Now().UTC()
+		jdn := f.JulianDayNumber(t)
+		stanHostInt, err := strconv.Atoi(stanHost)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
+		}
+		rrnHost := fmt.Sprintf("%06d%06d", jdn%1000000, stanHostInt)
+
+		stanHostDB, rrnHostDB, err := repo.TransactionGetRRNHost(context.Background(), h.db, &repo.TransactionHistory{
 			Mti:     "0200",
 			Procode: procode,
 			Amount:  amount,
@@ -323,7 +332,7 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> get stan host from db: %s", err), RC: RCErrGeneral}
 		}
 
-		if rrnHostDB == "" {
+		if stanHostDB == "" || rrnHostDB == "" {
 			delete(h.stanManage, stanHost)
 
 			isoSend, err := iso.CreateIsoResReversal(msg)
@@ -334,14 +343,40 @@ func (h *Handler) clientPrepare(msg []byte) ([]byte, int64, int, errorMessage) {
 			return isoSend, 0, 1, errorMessage{}
 		}
 
-		err = isomessage.Field(37, rrnHostDB)
-		if err != nil {
-			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set rrn to iso: %s", err), RC: RCErrGeneral}
-		}
-
-		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost, rrnHostDB)
+		idTrx, err = h.transactionCore(isomessage, isoReqString, stanHost, rrnHost)
 		if err != nil {
 			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> %s", err), RC: RCErrGeneral}
+		}
+
+		err = isomessage.Field(11, stanHost)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set stan to iso reversal: %s", err), RC: RCErrGeneral}
+		}
+
+		err = isomessage.Field(37, rrnHost)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set rrn to iso reversal: %s", err), RC: RCErrGeneral}
+		}
+
+		b90, err := isomessage.GetString(90)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> unpack rrn reversal: %s", err), RC: RCErrGeneral}
+		}
+
+		mti90 := b90[:4]
+		pcd90 := b90[4:6]
+		// stan90 := b90[6:12]
+		bit790 := b90[12:22]
+		// bit3790 := b90[22:34]
+		bit1890 := b90[34:38]
+		tid90 := b90[38:46]
+		b90 = fmt.Sprintf("%s%s%s%s%s%s%s", mti90, pcd90, stanHostDB, bit790, rrnHostDB, bit1890, tid90)
+		// b90 = fmt.Sprintf("%X", b90)
+		//0200 49 000000063659 1128032150 461008063658 601812004611
+
+		err = isomessage.Field(90, b90)
+		if err != nil {
+			return nil, 0, 1, errorMessage{Err: fmt.Errorf("client prepare -> set bit 90 to iso: %s", err), RC: RCErrGeneral}
 		}
 
 		_, ok := h.reversalAdvice[tid+stanHost]
@@ -478,6 +513,7 @@ func (h *Handler) transactionCore(isomessage *iso8583.Message, msg, stanHost, rr
 		if err != nil {
 			return 0, fmt.Errorf("transaction core -> convert amount: %w", err)
 		}
+		amount = amount / 100
 	}
 	bit12, err := isomessage.GetString(12)
 	if err != nil {

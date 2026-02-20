@@ -65,21 +65,21 @@ func TransactionHistoryGetDataWD(ctx context.Context, db *gorm.DB, data *Transac
 	return trxHistory, result.Error
 }
 
-func TransactionGetRRNHost(ctx context.Context, db *gorm.DB, data *TransactionHistory) (string, error) {
+func TransactionGetRRNHost(ctx context.Context, db *gorm.DB, data *TransactionHistory) (string, string, error) {
 	var trxHistory TransactionHistory
-	result := db.WithContext(ctx).Select("rrn_host").Order("rrn_host DESC").
+	result := db.WithContext(ctx).Select("stan_host, rrn_host").Order("rrn_host DESC").
 		Where("mti = ? AND procode = ? AND amount = ? AND rrn = ? AND tid = ? AND  mid = ? AND trx_date = ?",
 			data.Mti, data.Procode, data.Amount, data.Rrn, data.Tid, data.Mid, data.TrxDate).
 		First(&trxHistory)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
-			return "", nil
+			return "", "", nil
 		}
-		return "", result.Error
+		return "", "", result.Error
 	}
 
-	return trxHistory.Rrn, nil
+	return trxHistory.StanHost, trxHistory.RrnHost, nil
 }
 
 func KeyGetZMK(ctx context.Context, db *gorm.DB) (string, error) {

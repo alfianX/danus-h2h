@@ -1,6 +1,8 @@
 package iso
 
 import (
+	"fmt"
+
 	"github.com/moov-io/iso8583"
 	"github.com/moov-io/iso8583/encoding"
 	"github.com/moov-io/iso8583/field"
@@ -412,10 +414,32 @@ var Spec87 *iso8583.MessageSpec = &iso8583.MessageSpec{
 			Pref:        prefix.ASCII.Fixed,
 		}),
 		90: field.NewString(&field.Spec{
-			Length:      42,
+			Length:      60,
 			Description: "Original Data Elements",
 			Enc:         encoding.ASCII,
 			Pref:        prefix.ASCII.Fixed,
+			Pad:         padding.Right(' '),
+			Packer: field.PackerFunc(func(value []byte, spec *field.Spec) ([]byte, error) {
+				if spec.Pad != nil {
+					value = spec.Pad.Pad(value, spec.Length)
+				}
+
+				encodedValue, err := spec.Enc.Encode(value)
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode content: %w", err)
+				}
+
+				// Encode the length of the packed data, not the length of the value
+				maxLength := spec.Length
+
+				// Encode the length of the encoded value
+				lengthPrefix, err := spec.Pref.EncodeLength(maxLength, len(encodedValue))
+				if err != nil {
+					return nil, fmt.Errorf("failed to encode length: %w", err)
+				}
+
+				return append(lengthPrefix, encodedValue...), nil
+			}),
 		}),
 		98: field.NewString(&field.Spec{
 			Length:      25,
