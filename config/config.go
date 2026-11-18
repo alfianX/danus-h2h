@@ -9,7 +9,11 @@ type Config struct {
 	Mode              string `envconfig:"MODE" default:"debug"`
 	ListenPort        int    `envconfig:"LISTEN" default:"88"`
 	HostAddress       string `envconfig:"HOST_ADDRESS" required:"true"`
-	Database          string `envconfig:"MYSQL_DSN" required:"true"`
+	DbHost            string `envconfig:"DB_HOST" required:"true"`
+	DbPort            string `envconfig:"DB_PORT" required:"true"`
+	DbUser            string `envconfig:"DB_USER" required:"true"`
+	DbPass            string `envconfig:"DB_PASS" required:"true"`
+	DbName            string `envconfig:"DB_NAME" required:"true"`
 	HsmAddress        string `envconfig:"HSM_ADDRESS" required:"true"`
 	TimeoutTrx        int    `envconfig:"TIMEOUT_TRX" default:"60"`
 	TimeoutInactivity string `envconfig:"TIMEOUT_INACTIVITY" default:"60"`

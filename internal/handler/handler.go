@@ -85,7 +85,7 @@ func NewHandler(cnf config.Config, log *logrus.Logger) (*Handler, error) {
 		volumesn = license.GetVolume()
 	}
 
-	db, err := repo.InitDSN(cnf.Database)
+	db, err := repo.InitDSN(log, cnf)
 	if err != nil {
 		return nil, err
 	}

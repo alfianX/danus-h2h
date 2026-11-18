@@ -40,7 +40,7 @@ func SendMessageToHsm(IPPORT, message string) (string, error) {
 	return messageHost, nil
 }
 
-func HSMSaveZPK(IPPORT, zmk, zpk string) (string, error) {
+func HSMSaveZPK(IPPORT, zmk, zpk, kcv string) (string, error) {
 	command := "GIKUFA" + zmk + "U" + zpk
 	len := len(command)
 	lenHex := strings.ToUpper(fmt.Sprintf("%04x", len))
@@ -61,7 +61,14 @@ func HSMSaveZPK(IPPORT, zmk, zpk string) (string, error) {
 		return "", errors.New("HSM response invalid")
 	}
 
-	return string(resByte[10:43]), nil
+	zpkEnc := string(resByte[10:43])
+	kcvHsm := string(resByte[43:49])
+
+	if kcv != kcvHsm {
+		return "", errors.New("kcv invalid")
+	}
+
+	return zpkEnc, nil
 }
 
 func HSMGenerateKey(IPPORT, tmk string) (string, string, error) {

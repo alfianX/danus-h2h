@@ -9,3 +9,5 @@
 /cmd/standalone/.env
 
 docker-compose.yml
+/apps
+*log

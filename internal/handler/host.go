@@ -276,7 +276,14 @@ func (h *Handler) sendNmm() {
 				h.Log.Errorf("send nmm -> unpack bist 48: %v", err)
 				return
 			}
+
+			if len(de48) < 54 {
+				h.Log.Errorf("send nmm -> invalid length de48: %v", err)
+				return
+			}
+
 			zpk := de48[:32]
+			kcv := de48[48:54]
 
 			zmk, err := repo.KeyGetZMK(context.Background(), h.db)
 			if err != nil {
@@ -284,7 +291,7 @@ func (h *Handler) sendNmm() {
 				return
 			}
 
-			zpkEnc, err := f.HSMSaveZPK(h.Config.HsmAddress, zmk, zpk)
+			zpkEnc, err := f.HSMSaveZPK(h.Config.HsmAddress, zmk, zpk, kcv)
 			if err != nil {
 				h.Log.Errorf("send nmm -> save zpk to hsm: %v", err)
 				return
@@ -556,9 +563,16 @@ func (h *Handler) networkManagementHandler(msg []byte) {
 			h.Log.Errorf("network management handler -> unpack bist 48: %v", err)
 			return
 		}
-		zpk := de48[:32]
 
-		zpkEnc, err := f.HSMSaveZPK(h.Config.HsmAddress, zmk, zpk)
+		if len(de48) < 54 {
+			h.Log.Errorf("send nmm -> invalid length de48: %v", err)
+			return
+		}
+
+		zpk := de48[:32]
+		kcv := de48[48:54]
+
+		zpkEnc, err := f.HSMSaveZPK(h.Config.HsmAddress, zmk, zpk, kcv)
 		if err != nil {
 			h.Log.Errorf("network management handler -> save zpk to hsm: %v", err)
 			return
